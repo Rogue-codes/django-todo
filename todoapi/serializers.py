@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Task
 from django.contrib.auth import get_user_model
 
 
@@ -26,3 +26,30 @@ class CustomUserSerializer(serializers.ModelSerializer):
                             last_name=last_name, first_name=first_name, address=address)
             new_user.set_password(password)
             new_user.save()
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['task_id', 'user', 'title', 'description', 'status',
+                  'start_date', 'start_time', 'end_date', 'end_time']
+
+    def validate(self, data):
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+
+        if end_date < start_date:
+            raise serializers.ValidationError(
+                {"end_date": "End date cannot be before start date."}) 
+
+        # Ensure end_time is not before start_time if the task is on the same day
+        if start_date == end_date and end_time < start_time:
+            raise serializers.ValidationError(
+                {"end_time": "End time cannot be before start time on the same day."})
+
+        return data
+
+    def create(self, validated_data):
+        return Task.objects.create(**validated_data)
