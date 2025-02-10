@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -22,11 +21,6 @@ class CustomUser (AbstractUser):
         return self.username
 
 
-def validate_end_date(value):
-    if value < models.f('start_date'):
-        raise ValidationError('start date must come before end_date')
-
-
 class Task (models.Model):
     class Status(models.TextChoices):
         PENDING = 'pending'
@@ -40,7 +34,7 @@ class Task (models.Model):
     status = models.CharField(
         max_length=11, default=Status.PENDING, choices=Status.choices)
     start_date = models.DateField(blank=False, null=False)
-    end_date = models.DateField(blank=False, null=False, validators=[validate_end_date])
+    end_date = models.DateField(blank=False, null=False)
     start_time = models.TimeField(blank=False, null=False)
     end_time = models.TimeField(blank=False, null=False)
     

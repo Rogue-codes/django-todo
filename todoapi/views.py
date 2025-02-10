@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer,TaskSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status, generics, filters
-from .models import CustomUser
-from .filters import UserFilter
+from .models import CustomUser, Task
+from .filters import UserFilter, TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
 # Create your views here.
 
@@ -29,4 +29,18 @@ class UserListView(generics.ListAPIView):
 class UserDetailsView(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+    
+
+class CreateTaskApiview(generics.CreateAPIView):
+    model = Task
+    serializer_class = TaskSerializer
+    
+class TaskListApiview(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    filterset_class = TaskFilter
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'description']
+    ordering_fields = ['title']
     

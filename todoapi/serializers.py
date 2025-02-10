@@ -31,7 +31,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['task_id', 'user', 'title', 'description', 'status',
+        fields = ['user', 'title', 'description', 'status',
                   'start_date', 'start_time', 'end_date', 'end_time']
 
     def validate(self, data):

@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('status', models.CharField(choices=[('pending', 'Pending'), ('completed', 'Completed'), ('cancelled', 'Cancelled')], default='pending', max_length=11)),
                 ('start_date', models.DateField()),
-                ('end_date', models.DateField(validators=[todoapi.models.validate_end_date])),
+                ('end_date', models.DateField()),
                 ('start_time', models.TimeField()),
                 ('end_time', models.TimeField()),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
