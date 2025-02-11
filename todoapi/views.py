@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import CustomUserSerializer,TaskSerializer
+from .serializers import CustomUserSerializer,CreateTaskSerializer, GetTaskSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status, generics, filters
@@ -33,14 +33,19 @@ class UserDetailsView(generics.RetrieveAPIView):
 
 class CreateTaskApiview(generics.CreateAPIView):
     model = Task
-    serializer_class = TaskSerializer
+    serializer_class = CreateTaskSerializer
     
 class TaskListApiview(generics.ListAPIView):
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+    serializer_class = GetTaskSerializer
     filterset_class = TaskFilter
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['title']
+
+class TaskDetailsView (generics.RetrieveAPIView):
+    queryset = Task.objects.all()
+    serializer_class = GetTaskSerializer
+    lookup_field = 'task_id'
     

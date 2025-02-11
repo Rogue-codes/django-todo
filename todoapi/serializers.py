@@ -28,7 +28,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             new_user.save()
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['user', 'title', 'description', 'status',
@@ -53,3 +53,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Task.objects.create(**validated_data)
+    
+class GetTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['user', 'task_id', 'title', 'description', 'status',
+                  'start_date', 'start_time', 'end_date', 'end_time']
