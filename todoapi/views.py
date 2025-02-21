@@ -9,6 +9,9 @@ from .filters import UserFilter, TaskFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+
 
 @api_view(['POST'])
 def create_user_view(request):
@@ -73,12 +76,14 @@ class TaskListApiview(generics.ListAPIView):
                        filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['title']
-    
+
+
 class MyTaskListApiView(generics.ListAPIView):
     queryset = Task.objects.all()
     serializer_class = GetTaskSerializer
     filterset_class = TaskFilter
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['title']
 
@@ -91,5 +96,33 @@ class TaskDetailsView (generics.RetrieveAPIView):
     serializer_class = GetTaskSerializer
     lookup_field = 'task_id'
 
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class UpdateTaskStatusView(generics.UpdateAPIView):
+    queryset = Task.objects.all()
+    serializer_class = GetTaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, task_id=self.kwargs["task_id"])
+
+        # Ensure only the owner of the task can update it
+        if task.user != request.user:
+            return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+        if task.status == Task.Status.NOT_STARTED:
+            return Response({"error": "Cannot update task status as task hasn't started yet."}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_status = request.data.get("status")
+
+        # Validate that the new status is allowed
+        if new_status not in Task.Status.values:
+            return Response({"error": "Invalid status."}, status=status.HTTP_400_BAD_REQUEST)
+
+        task.status = new_status
+        task.save()
+
+        return Response({"message": "Task status updated successfully.", "task": GetTaskSerializer(task).data}, status=status.HTTP_200_OK)
