@@ -35,6 +35,14 @@ class UserDetailsView(generics.RetrieveAPIView):
     serializer_class = CustomUserSerializer
 
 
+# class CreateTaskApiview(generics.CreateAPIView):
+#     model = Task
+#     serializer_class = CreateTaskSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def get_serializer_context(self):
+#         return {"request": self.request}
+
 class CreateTaskApiview(generics.CreateAPIView):
     model = Task
     serializer_class = CreateTaskSerializer
@@ -42,6 +50,19 @@ class CreateTaskApiview(generics.CreateAPIView):
 
     def get_serializer_context(self):
         return {"request": self.request}
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(
+            {
+                "success": True,
+                "message": "Task created successfully",
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class TaskListApiview(generics.ListAPIView):

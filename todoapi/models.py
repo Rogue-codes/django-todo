@@ -37,6 +37,10 @@ class Task (models.Model):
     end_date = models.DateField(blank=False, null=False)
     start_time = models.TimeField(blank=False, null=False)
     end_time = models.TimeField(blank=False, null=False)
-    
-    def __str__(self):
-        return self.title
+    created_at = models.DateTimeField(auto_now_add=True)
+    trigger_notification_at = models.CharField(
+    max_length=50, default=None, blank=True, null=True)
+
+
+def __str__(self):
+    return self.title

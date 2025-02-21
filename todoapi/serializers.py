@@ -34,7 +34,7 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['title', 'description', 'status',
-                  'start_date', 'start_time', 'end_date', 'end_time']
+                  'start_date', 'start_time', 'end_date', 'end_time', 'trigger_notification_at']
 
     def validate(self, data):
         start_date = data.get('start_date')
@@ -63,7 +63,7 @@ class GetTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['user', 'task_id', 'title', 'description', 'status',
-                  'start_date', 'start_time', 'end_date', 'end_time']
+                  'start_date', 'start_time', 'end_date', 'end_time', 'created_at', 'trigger_notification_at']
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
