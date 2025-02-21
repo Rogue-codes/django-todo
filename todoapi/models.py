@@ -23,7 +23,8 @@ class CustomUser (AbstractUser):
 
 class Task (models.Model):
     class Status(models.TextChoices):
-        PENDING = 'pending'
+        NOT_STARTED='not_started'
+        IN_PROGRESS = 'in_progress'
         COMPLETED = 'completed'
         CANCELLED = 'cancelled'
 
@@ -32,7 +33,7 @@ class Task (models.Model):
     title = models.CharField(max_length=50, blank=False, null=False)
     description = models.TextField(blank=False, null=False)
     status = models.CharField(
-        max_length=11, default=Status.PENDING, choices=Status.choices)
+        max_length=11, default=Status.NOT_STARTED, choices=Status.choices)
     start_date = models.DateField(blank=False, null=False)
     end_date = models.DateField(blank=False, null=False)
     start_time = models.TimeField(blank=False, null=False)
